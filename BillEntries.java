@@ -10,6 +10,7 @@ public class BillEntries {
     Item item;
     
     BillEntries(int itemId, int quantity, Item item) {
+        this.item = item;
         this.itemId = itemId;
         this.itemName = item.getItemName();
         this.quantity = quantity;
@@ -65,7 +66,7 @@ public class BillEntries {
         this.item = item;
     }
     
-    
+
     public String getCategory() {
         return this.category;
     }

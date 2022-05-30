@@ -5,7 +5,7 @@ public class Main {
     public static final Scanner sc = new Scanner(System.in);
     public static HashMap<String, User> userMap = new HashMap<>();
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
-    public static HashMap<String, List<String>> orderHistory = new HashMap<>();
+    public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -115,35 +115,37 @@ public class Main {
                             sale.viewCart();
                             break;
                         case 3:
-                            String res = sale.saleNow(itemMap, userMap.get(username));
-                            if(res != "") {
-                                if(orderHistory.containsKey(username))
-                                    orderHistory.get(username).add(res);
-                                else {
-                                    orderHistory.put(username, new ArrayList<String>());
-                                    orderHistory.get(username).add(res);
-                                }
+                            List<BillEntries> bill = sale.saleNow(itemMap, userMap.get(username));
+                            if(bill != null) {
+                                if(orderHistory.get(username) == null)
+                                    orderHistory.put(username, new ArrayList<>());
+                                orderHistory.get(username).add(bill);
                                 System.out.println("Thank you for your purchase :)");
                             }
                             break;
                         case 4:
                             for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
                                 System.out.println(entry.getValue());
+                            break;
+                        }
                         break;
-                    }
-                    break;
-                    case 2:
+                case 2:
                     if(orderHistory.containsKey(username)) {
-                        List<String> bills = orderHistory.get(username);
-                        for(String s : bills)
-                           System.out.println(s);
+                        List<List<BillEntries>> bills = orderHistory.get(username);
+                        for(List<BillEntries> ls : bills) {
+                            int tot = 0;
+                            for(BillEntries b : ls) {
+                                tot += b.getTotalPrice();
+                                System.out.println(b.toString());
+                            }
+                            System.out.println("Total Bill Price: " + tot);
+                        }
                     }
                     else
                         System.out.println("There is no previous purchase. Kindly make some orders.");
-                    break;                
+                    break;
             }
         }
-
     }
 
     public static void preload() {
@@ -182,6 +184,7 @@ public class Main {
                 }
             }
         } catch (Exception e) { 
+            System.out.println(e);
             System.out.println("Good bye..");
         }
         //

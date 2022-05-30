@@ -19,12 +19,19 @@ public class Sale {
         int curPrice = item.getPrice() * quantity;
         this.totalBill += curPrice;
         BillEntries curProduct = new BillEntries(itemId, quantity, item);
+        if(billEntries == null)
+            billEntries = new ArrayList<>();
         billEntries.add(curProduct);
     }
 
     public boolean viewCart() {
-        if(this.totalBill != 0) {
-            System.out.println(bill.toString() + "\nTotal Price: " + this.totalBill);
+        if(billEntries != null && billEntries.size() != 0) {
+            this.totalBill = 0;
+            for(BillEntries b : billEntries) {
+                this.totalBill += b.getTotalPrice();
+                System.out.println(b.toString());
+            }
+            System.out.println("\nTotal Price: " + this.totalBill);
             return true;
         }
         else {
@@ -36,29 +43,38 @@ public class Sale {
     public void clearCart(Map<Integer, Item> itemMap) {
         for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
             itemMap.get(entry.getKey()).setQuantity(entry.getValue());
-        bill = new StringBuilder();
         this.totalBill = 0;
     }
             
     // public void applySpecificCoupon(Map<Integer, Item> itemMap) {}
 
-    public String saleNow(Map<Integer, Item> itemMap, User user) {
+    public List<BillEntries> saleNow(Map<Integer, Item> itemMap, User user) {
         Scanner sn = new Scanner(System.in);
         System.out.println("Your cart items are:");
         if(viewCart() == false)
-            return "";
+            return null;
+
         System.out.println("Do you want to confirm order[y/n]: ");
         char ch = sn.next().charAt(0);
+
         if(ch == 'Y' || ch == 'y') {
             System.out.println("Do you want to enter coupon code[y/n]: ");
             ch = sn.next().charAt(0);
             if(ch == 'Y' || ch == 'y') {
                 System.out.println("Enter your coupon code: ");
                 String coupon = sn.next();
+
                 if(user.getCoupon() == true && coupon.equals("PROMO010")) {
-                    this.totalBill -= (this.totalBill / 10);
                     System.out.println("Coupon applied successfully.");
-                    viewCart();
+                    
+                    this.totalBill = 0;
+                    for(BillEntries b : billEntries) {
+                        this.totalBill += b.getTotalPrice();
+                        System.out.println(b.toString());
+                    }
+                    this.totalBill -= (this.totalBill / 10);
+                    System.out.println("\nTotal Price: " + this.totalBill);
+                    
                     user.setCoupon(false);
                 } else if(coupon.equals("CLEAN10")) {
                     // applySpecificCoupon(itemMap);
@@ -68,11 +84,12 @@ public class Sale {
                     System.out.println("Unable to apply promo code.");
                 }
             }
-            String res = bill.toString() + "\nTotal Price: " + this.totalBill + "\n";
-            bill = new StringBuilder();
             this.totalBill = 0;
-            return res;
-        }
+            viewCart();
+            List<BillEntries> temp = billEntries;
+            billEntries = null;
+            return temp;
+        } 
         else {
             System.out.println("Order unsuccessfull.");
             System.out.println("Do you want to clear cart Items[y/n]: ");
@@ -87,7 +104,7 @@ public class Sale {
                 System.out.println("Cart cleared successfully.");                
             }
         }
-        return "";
+        return null;
     }
 
     @Override
