@@ -38,7 +38,7 @@ public class Sale {
         this.totalBill = 0;
     }
 
-    public String saleNow(Map<Integer, Item> itemMap) {
+    public String saleNow(Map<Integer, Item> itemMap, User user) {
         System.out.println("Your cart items are:");
         if(viewCart() == false)
             return "";
@@ -46,6 +46,20 @@ public class Sale {
         Scanner sn = new Scanner(System.in);
         char ch = sn.next().charAt(0);
         if(ch == 'Y' || ch == 'y') {
+            System.out.println("Do you want to enter coupon code[y/n]: ");
+            ch = sn.next().charAt(0);
+            if(ch == 'Y' || ch == 'y') {
+                System.out.println("Enter your coupon code: ");
+                String coupon = sn.next();
+                if(user.getCoupon() == true && coupon.equals("PROMO010")) {
+                    this.totalBill -= (this.totalBill / 10);
+                    System.out.println("Coupon applied successfully.");
+                    viewCart();
+                    user.setCoupon(false);
+                } else {
+                    System.out.println("Unable to apply promo code.");
+                }
+            }
             String res = bill.toString() + "\nTotal Price: " + this.totalBill + "\n";
             bill = new StringBuilder();
             this.totalBill = 0;

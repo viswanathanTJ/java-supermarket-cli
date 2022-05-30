@@ -115,7 +115,7 @@ public class Main {
                             sale.viewCart();
                             break;
                         case 3:
-                            String res = sale.saleNow(itemMap);
+                            String res = sale.saleNow(itemMap, userMap.get(username));
                             if(res != "") {
                                 if(orderHistory.containsKey(username))
                                     orderHistory.get(username).add(res);
@@ -129,10 +129,10 @@ public class Main {
                         case 4:
                             for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
                                 System.out.println(entry.getValue());
-                            break;
+                        break;
                     }
                     break;
-                case 2:
+                    case 2:
                     if(orderHistory.containsKey(username)) {
                         List<String> bills = orderHistory.get(username);
                         for(String s : bills)

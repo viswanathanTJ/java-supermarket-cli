@@ -3,6 +3,15 @@ public class User {
     protected String username;
     protected String password;
     protected String role;
+    protected boolean coupon = true;
+
+    public boolean getCoupon() {
+        return this.coupon;
+    }
+    public void setCoupon(boolean coupon) {
+        this.coupon = coupon;
+    }
+
 
     public int getCid() {
         return this.cid;
