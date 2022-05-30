@@ -4,6 +4,7 @@ import java.util.*;
 public class Sale {
     private int totalBill = 0;
     StringBuilder bill = new StringBuilder();
+    List<BillEntries> billEntries = new ArrayList<>();
     HashMap<Integer, Integer> itemsInCart = new HashMap<>();
     
     public int getTotalBill() {
@@ -17,7 +18,8 @@ public class Sale {
         itemsInCart.put(itemId, quantity);
         int curPrice = item.getPrice() * quantity;
         this.totalBill += curPrice;
-        bill.append(item.getDetailsWithQuantity(quantity) + " Product Price: " + curPrice + "\n");
+        BillEntries curProduct = new BillEntries(itemId, quantity, item);
+        billEntries.add(curProduct);
     }
 
     public boolean viewCart() {
@@ -33,17 +35,19 @@ public class Sale {
 
     public void clearCart(Map<Integer, Item> itemMap) {
         for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
-                itemMap.get(entry.getKey()).setQuantity(entry.getValue());
+            itemMap.get(entry.getKey()).setQuantity(entry.getValue());
         bill = new StringBuilder();
         this.totalBill = 0;
     }
+            
+    // public void applySpecificCoupon(Map<Integer, Item> itemMap) {}
 
     public String saleNow(Map<Integer, Item> itemMap, User user) {
+        Scanner sn = new Scanner(System.in);
         System.out.println("Your cart items are:");
         if(viewCart() == false)
             return "";
         System.out.println("Do you want to confirm order[y/n]: ");
-        Scanner sn = new Scanner(System.in);
         char ch = sn.next().charAt(0);
         if(ch == 'Y' || ch == 'y') {
             System.out.println("Do you want to enter coupon code[y/n]: ");
@@ -56,7 +60,11 @@ public class Sale {
                     System.out.println("Coupon applied successfully.");
                     viewCart();
                     user.setCoupon(false);
-                } else {
+                } else if(coupon.equals("CLEAN10")) {
+                    // applySpecificCoupon(itemMap);
+                    System.out.println("Need to implement.");
+                }
+                else {
                     System.out.println("Unable to apply promo code.");
                 }
             }
