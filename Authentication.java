@@ -11,9 +11,9 @@ public class Authentication {
             } else if (s.charAt(i) == '9') {
                 encryptedString += '0';
             } else {
-                int temp = s.charAt(i) + 1;
-                char ctemp = (char) temp;
-                encryptedString += ctemp;
+                int temp = s.charAt(i) + 1; // 66
+                char ctemp = (char) temp; // b
+                encryptedString += ctemp; 
             }
         }
         return encryptedString;

@@ -6,6 +6,7 @@ public class Main {
     public static HashMap<String, User> userMap = new HashMap<>();
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
     public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
+    public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -20,12 +21,13 @@ public class Main {
         itemMap.put(item.getItemId(), item);
     }
 
-    public static void addUser(int userId, String username, String password, String role) {
+    public static void addUser(int userId, String username, String password, String email, String role) {
         User user = new User();
         user.setCid(userId);
         user.setUsername(username);
         user.setPassword(auth.encrypt(password));
         user.setRole(role);
+        user.setEmail(email);
         userMap.put(user.getUsername(), user);
     }
 
@@ -33,7 +35,7 @@ public class Main {
         boolean loggedIn = true;
         while(loggedIn == true) {
             System.out.println("Press 1 to update item\nPress 2 to list the top selling items");
-            System.out.println("Press 3 to add a new customer\nPress 0 to logout");
+            System.out.println("Press 3 to add a new customer\nPress 99 to show all users and items\nPress 0 to logout");
             int choice = sc.nextInt();
             switch(choice) {
                 case 1:
@@ -49,15 +51,21 @@ public class Main {
                         System.out.println("Invalid item id");
                     }
                     break;
+                case 2:
+                    System.out.println("Top selling items is still under development");
+                    break;
                 case 3:
                     System.out.println("Enter username: ");
                     String username = sc.next();
                     if(userMap.containsKey(username))
-                        System.out.println("Username already exists.");
+                    System.out.println("Username already exists.");
                     else {
+                        System.out.println("Enter email id: ");
+                        String email = sc.next();
+
                         System.out.println("Enter password: ");
                         String password = sc.next();
-                        addUser(customerId++, username, password, "customer");
+                        addUser(customerId++, username, password, email, "customer");
                         System.out.println("Customer added successfully.");
                     }
                     break;
@@ -81,6 +89,7 @@ public class Main {
     public static void customerMenu(String username) {
         boolean loggedIn = true;
         Sale sale = new Sale();
+        System.out.println("Welcome "+username);
         while(loggedIn == true) {
             System.out.println("Press 1 to place an order\nPress 2 to view the order history\nPress 0 to logout");
             int choice = sc.nextInt();
@@ -132,13 +141,12 @@ public class Main {
                 case 2:
                     if(orderHistory.containsKey(username)) {
                         List<List<BillEntries>> bills = orderHistory.get(username);
+                        int index = 0;
                         for(List<BillEntries> ls : bills) {
-                            int tot = 0;
                             for(BillEntries b : ls) {
-                                tot += b.getTotalPrice();
                                 System.out.println(b.toString());
                             }
-                            System.out.println("Total Bill Price: " + tot);
+                            System.out.println("Total Bill Price: " + orderHistoryTotalPrice.get(username).get(index++));
                         }
                     }
                     else
@@ -149,9 +157,9 @@ public class Main {
     }
 
     public static void preload() {
-        addUser(customerId++, "admin", "admin123", "admin");
-        addUser(customerId++, "kaushik", "kaushik123", "customer");
-        addUser(customerId++, "vignesh", "vignesh123", "customer");
+        addUser(customerId++, "admin", "admin123", "admin@gmail.com", "admin");
+        addUser(customerId++, "kaushik", "kaushik123", "kaush@gmail.com", "customer");
+        addUser(customerId++, "vignesh", "vignesh123", "default@gmail.com", "customer");
         addItem(itemId++, "Good day", "Biscuit", 90, 10);
         addItem(itemId++, "Pantene", "Conditioner", 110, 10);
         addItem(itemId++, "Lux", "Soap", 25, 10);

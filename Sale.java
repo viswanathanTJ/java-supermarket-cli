@@ -1,6 +1,5 @@
 import java.util.*;
 
-
 public class Sale {
     private int totalBill = 0;
     StringBuilder bill = new StringBuilder();
@@ -74,6 +73,11 @@ public class Sale {
                     }
                     this.totalBill -= (this.totalBill / 10);
                     System.out.println("\nTotal Price: " + this.totalBill);
+                    
+                    // Storing Total Bill due to coupon
+                    if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
+                        Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
+                    Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
                     
                     user.setCoupon(false);
                 } else if(coupon.equals("CLEAN10")) {
