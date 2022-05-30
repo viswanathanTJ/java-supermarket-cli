@@ -1,10 +1,60 @@
 
 import java.util.*;
 
+class Sale {
+    private int totalBill = 0;
+    StringBuilder bill = new StringBuilder();
+    HashMap<Integer, Integer> itemsInCart = new HashMap<>();
+    public int getTotalBill() {
+        return this.totalBill;
+    }
+    public void setTotalBill(int totalBill) {
+        this.totalBill = totalBill;
+    }
+
+    public void addToCart(int itemId, int quantity, Item item) {
+        itemsInCart.put(itemId, quantity);
+        int curPrice = item.getPrice() * quantity;
+        this.totalBill += curPrice;
+        bill.append(item.toString() + " Product Price: " + curPrice + "\n");
+    }
+
+    public void viewCart() {
+        System.out.println(bill.toString() + "\nTotal Price: " + this.totalBill);
+    }
+
+    public boolean saleNow(HashMap<Integer, Item> itemMap) {
+        System.out.println("Your cart items are:");
+        viewCart();
+        System.out.println("Do you want to confirm order[y/n]: ");
+        Scanner sn = new Scanner(System.in);
+        char ch = sn.next().charAt(0);
+        if(ch == 'Y' || ch == 'y') {
+            return true;
+        }
+        else {
+            System.out.println("Order unsuccessfull.");
+            System.out.println("Do you want to clear cart Items[y/n]: ");
+            ch = sn.next().charAt(0);
+            if(ch == 'Y' || ch == 'y') {
+                for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
+                    itemMap.get(entry.getKey()).setQuantity(entry.getValue()); 
+                System.out.println("Cart cleared successfully.");                
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return bill.toString();
+    }
+}
+
 public class Main {
     public static final Scanner sc = new Scanner(System.in);
-    public static Map<String, User> userMap = new HashMap<>();
-    public static Map<Integer, Item> itemMap = new HashMap<>();
+    public static HashMap<String, User> userMap = new HashMap<>();
+    public static HashMap<Integer, Item> itemMap = new HashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -78,9 +128,50 @@ public class Main {
 
     public static void customerMenu() {
         boolean loggedIn = true;
+        Sale sale = new Sale();
         while(loggedIn == true) {
             System.out.println("Press 1 to place an order\nPress 2 to view the order history\nPress 0 to logout");
-
+            int choice = sc.nextInt();
+            switch(choice) {
+                case 0:
+                    loggedIn = false;
+                    break;
+                case 1:
+                    System.out.println("Press 1 to add item in cart\nPress 2 to view cart\nPress 3 to confirm order\n");
+                    int orderChoice = sc.nextInt();
+                    switch(orderChoice) {
+                        case 1:
+                            System.out.println("Enter item id: ");
+                            int itemId = sc.nextInt();
+                            if(itemMap.containsKey(itemId)) {
+                                System.out.println("Enter quantity: ");
+                                int quantity = sc.nextInt();
+                                Item curItem = itemMap.get(itemId);
+                                if(quantity > curItem.getQuantity()) {
+                                    System.out.println("Sorry. Number of quantity availablity is lower than you ordering.");
+                                    System.out.println("We have the maximum quantity is " + curItem.getQuantity());
+                                } else {
+                                    sale.addToCart(itemId, quantity, curItem);
+                                    curItem.setQuantity(curItem.getQuantity() - quantity);
+                                    System.out.println("Item successfully added to the cart");
+                                }
+                            }
+                            break;
+                        case 2:
+                            sale.viewCart();
+                            break;
+                        case 3:
+                            if(sale.saleNow(itemMap) == true)
+                                System.out.println("Thank you for your purchase :)");
+                            break;
+                    }
+                    break;
+                case 2:
+                    System.out.println(sale);
+                case 3:
+                    if(sale.saleNow(itemMap) == true)
+                        System.out.println("Thank you for your purchase :)");                   
+            }
         }
 
     }
@@ -94,7 +185,7 @@ public class Main {
         addItem(itemId++, "Lux", "Soap", 25, 10);
         addItem(itemId++, "Dove", "Soap", 45, 10);
     }
-    
+
     public static void main(String[] args) {
         // Preloading Data
             preload();
