@@ -1,76 +1,5 @@
 
 import java.util.*;
-class User {
-    protected int cid;
-    protected String username;
-    protected String password;
-    protected String role;
-
-    public int getCid() {
-        return this.cid;
-    }
-    public void setCid(int cid) {
-        this.cid = cid;
-    }
-    public String getUsername() {
-        return this.username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public String getPassword() {
-        return this.password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public String getRole() {
-        return this.role;
-    }
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-}
-class Item {
-    protected int itemId;
-    protected String itemName;
-    protected String category;
-    protected int price;
-    protected int quantity;
-
-    public int getItemId() {
-        return this.itemId;
-    }
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-    public String getItemName() {
-        return this.itemName;
-    }
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-    public String getCategory() {
-        return this.category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    public int getPrice() {
-        return this.price;
-    }
-    public void setPrice(int price) {
-        this.price = price;
-    }
-    public int getQuantity() {
-        return this.quantity;
-    }
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-}
-
 
 public class Main {
     public static final Scanner sc = new Scanner(System.in);
@@ -130,6 +59,17 @@ public class Main {
                         addUser(customerId++, username, auth.encrypt(password), "customer");
                     }
                     break;
+                // debug
+                case 99:
+                    System.out.println("USERS");
+                    for(Map.Entry<String, User> entry: userMap.entrySet()) {
+                        System.out.println(entry.getValue());
+                    }
+                    System.out.println("ITEMS");
+                    for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
+                        System.out.println(entry.getValue());
+                    break;
+                //
                 case 0:
                     loggedIn = false;                
             }
@@ -144,8 +84,8 @@ public class Main {
         }
 
     }
-    public static void main(String[] args) {
-        // Preloading Data
+
+    public static void preload() {
         addUser(customerId++, "admin", "admin123", "admin");
         addUser(customerId++, "kaushik", "kaushik123", "customer");
         addUser(customerId++, "vignesh", "vignesh123", "customer");
@@ -153,27 +93,36 @@ public class Main {
         addItem(itemId++, "Pantene", "Conditioner", 110, 10);
         addItem(itemId++, "Lux", "Soap", 25, 10);
         addItem(itemId++, "Dove", "Soap", 45, 10);
+    }
+    
+    public static void main(String[] args) {
+        // Preloading Data
+            preload();
         //
 
         // Login
-        while(true) {
-            System.out.println("Enter username and password: ");
-            String username = sc.next();
-            if(userMap.containsKey(username)) {
-                String password = sc.next();
-                User curUser = userMap.get(username);
-                if(auth.encrypt(password).equals(curUser.getPassword())) {
-                    if(curUser.getRole() == "admin") {  
-                        adminMenu();
-                    } else if(curUser.getRole() == "customer") {
-                        customerMenu();
-                    }
+        try {
+            while(true) {
+                System.out.println("Enter username and password: ");
+                String username = sc.next();
+                if(userMap.containsKey(username)) {
+                    String password = sc.next();
+                    User curUser = userMap.get(username);
+                    if(auth.encrypt(password).equals(curUser.getPassword())) {
+                        if(curUser.getRole() == "admin")
+                            adminMenu();
+                        else if(curUser.getRole() == "customer")
+                            customerMenu();
+                    } else {
+                        System.out.println("Invalid password");
+                    }   
                 } else {
-                    System.out.println("Invalid password");
-                }   
-            } else {
-                System.out.println("Invalid username");
+                    System.out.println("Invalid username");
+                }
             }
+        } catch (Exception e) { 
+            System.out.println("Good bye..");
         }
+        //
     }
 }
