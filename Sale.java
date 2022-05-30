@@ -2,6 +2,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+
+class Orders {
+
+}
+
+class OrderHistory {
+    // HashMap<String, Orders>
+}
+
+
 public class Sale {
     private int totalBill = 0;
     StringBuilder bill = new StringBuilder();
@@ -22,7 +32,17 @@ public class Sale {
     }
 
     public void viewCart() {
-        System.out.println(bill.toString() + "\nTotal Price: " + this.totalBill);
+        if(this.totalBill != 0)
+            System.out.println(bill.toString() + "\nTotal Price: " + this.totalBill);
+        else
+            System.out.println("Cart is empty. Kindly add some products.");
+    }
+
+    public void clearCart(Map<Integer, Item> itemMap) {
+        for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
+                    itemMap.get(entry.getKey()).setQuantity(entry.getValue());
+            bill = new StringBuilder();
+            this.totalBill = 0;
     }
 
     public boolean saleNow(Map<Integer, Item> itemMap) {
@@ -32,6 +52,7 @@ public class Sale {
         Scanner sn = new Scanner(System.in);
         char ch = sn.next().charAt(0);
         if(ch == 'Y' || ch == 'y') {
+            clearCart(itemMap);
             return true;
         }
         else {
@@ -39,8 +60,7 @@ public class Sale {
             System.out.println("Do you want to clear cart Items[y/n]: ");
             ch = sn.next().charAt(0);
             if(ch == 'Y' || ch == 'y') {
-                for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
-                    itemMap.get(entry.getKey()).setQuantity(entry.getValue()); 
+                clearCart(itemMap);
                 System.out.println("Cart cleared successfully.");                
             }
         }

@@ -123,7 +123,8 @@ public class Main {
                     }
                     break;
                 case 2:
-                    System.out.println(sale);
+                    System.out.println(sale + "HISTORY");
+                    break;
                 case 3:
                     if(sale.saleNow(itemMap) == true)
                         System.out.println("Thank you for your purchase :)");                   
