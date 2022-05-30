@@ -4,7 +4,8 @@ import java.util.*;
 public class Main {
     public static final Scanner sc = new Scanner(System.in);
     public static HashMap<String, User> userMap = new HashMap<>();
-    public static Map<Integer, Item> itemMap = new HashMap<>();
+    public static HashMap<Integer, Item> itemMap = new HashMap<>();
+    public static HashMap<String, List<String>> orderHistory = new HashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -77,7 +78,7 @@ public class Main {
         }
     }
 
-    public static void customerMenu() {
+    public static void customerMenu(String username) {
         boolean loggedIn = true;
         Sale sale = new Sale();
         while(loggedIn == true) {
@@ -114,20 +115,32 @@ public class Main {
                             sale.viewCart();
                             break;
                         case 3:
-                            if(sale.saleNow(itemMap) == true)
+                            String res = sale.saleNow(itemMap);
+                            if(res != "") {
+                                if(orderHistory.containsKey(username))
+                                    orderHistory.get(username).add(res);
+                                else {
+                                    orderHistory.put(username, new ArrayList<String>());
+                                    orderHistory.get(username).add(res);
+                                }
                                 System.out.println("Thank you for your purchase :)");
+                            }
                             break;
                         case 4:
                             for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
                                 System.out.println(entry.getValue());
+                            break;
                     }
                     break;
                 case 2:
-                    System.out.println(sale + "HISTORY");
-                    break;
-                case 3:
-                    if(sale.saleNow(itemMap) == true)
-                        System.out.println("Thank you for your purchase :)");                   
+                    if(orderHistory.containsKey(username)) {
+                        List<String> bills = orderHistory.get(username);
+                        for(String s : bills)
+                           System.out.println(s);
+                    }
+                    else
+                        System.out.println("There is no previous purchase. Kindly make some orders.");
+                    break;                
             }
         }
 
@@ -160,7 +173,7 @@ public class Main {
                         if(curUser.getRole() == "admin")
                             adminMenu();
                         else if(curUser.getRole() == "customer")
-                            customerMenu();
+                            customerMenu(username);
                     } else {
                         System.out.println("Invalid password");
                     }   

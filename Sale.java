@@ -1,15 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-
-
-class Orders {
-
-}
-
-class OrderHistory {
-    // HashMap<String, Orders>
-}
+import java.util.*;
 
 
 public class Sale {
@@ -28,43 +17,55 @@ public class Sale {
         itemsInCart.put(itemId, quantity);
         int curPrice = item.getPrice() * quantity;
         this.totalBill += curPrice;
-        bill.append(item.toString() + " Product Price: " + curPrice + "\n");
+        bill.append(item.getDetailsWithQuantity(quantity) + " Product Price: " + curPrice + "\n");
     }
 
-    public void viewCart() {
-        if(this.totalBill != 0)
+    public boolean viewCart() {
+        if(this.totalBill != 0) {
             System.out.println(bill.toString() + "\nTotal Price: " + this.totalBill);
-        else
+            return true;
+        }
+        else {
             System.out.println("Cart is empty. Kindly add some products.");
+            return false;
+        }
     }
 
     public void clearCart(Map<Integer, Item> itemMap) {
         for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet())
-                    itemMap.get(entry.getKey()).setQuantity(entry.getValue());
-            bill = new StringBuilder();
-            this.totalBill = 0;
+                itemMap.get(entry.getKey()).setQuantity(entry.getValue());
+        bill = new StringBuilder();
+        this.totalBill = 0;
     }
 
-    public boolean saleNow(Map<Integer, Item> itemMap) {
+    public String saleNow(Map<Integer, Item> itemMap) {
         System.out.println("Your cart items are:");
-        viewCart();
+        if(viewCart() == false)
+            return "";
         System.out.println("Do you want to confirm order[y/n]: ");
         Scanner sn = new Scanner(System.in);
         char ch = sn.next().charAt(0);
         if(ch == 'Y' || ch == 'y') {
-            clearCart(itemMap);
-            return true;
+            String res = bill.toString() + "\nTotal Price: " + this.totalBill + "\n";
+            bill = new StringBuilder();
+            this.totalBill = 0;
+            return res;
         }
         else {
             System.out.println("Order unsuccessfull.");
             System.out.println("Do you want to clear cart Items[y/n]: ");
             ch = sn.next().charAt(0);
             if(ch == 'Y' || ch == 'y') {
-                clearCart(itemMap);
+                for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet()) {
+                    int resetQuantity = entry.getValue() + itemMap.get(entry.getKey()).getQuantity();
+                    itemMap.get(entry.getKey()).setQuantity(resetQuantity);
+                }
+                bill = new StringBuilder();
+                this.totalBill = 0;
                 System.out.println("Cart cleared successfully.");                
             }
         }
-        return false;
+        return "";
     }
 
     @Override

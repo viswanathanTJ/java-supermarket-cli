@@ -36,6 +36,10 @@ public class Item {
         this.quantity = quantity;
     }
 
+    public String getDetailsWithQuantity(int quantity) {
+        return "Item ID: " + getItemId() + " Name: " + getItemName() + " Category: " + getCategory() + " Price: " + getPrice() + " Quantity: " + quantity;
+    }
+
     @Override
     public String toString() {
         return "Item ID: " + getItemId() + " Name: " + getItemName() + " Category: " + getCategory() + " Price: " + getPrice() + " Quantity: " + getQuantity();
