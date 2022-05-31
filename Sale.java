@@ -86,9 +86,9 @@ public class Sale {
                     System.out.println("\nTotal Price: " + this.totalBill);
                     
                     // Storing Total Bill due to coupon
-                    if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
-                        Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
-                    Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
+                    // if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
+                    //     Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
+                    // Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
                     user.setCoupon(false);
                 } else if(coupon.equals("CLEAN10")) {
                     System.out.println("20% Offer coupon applied successfully for Soap Category");
@@ -97,7 +97,12 @@ public class Sale {
                 else {
                     System.out.println("Unable to apply promo code.");
                 }
+            } else {
+                viewCart();
             }
+            if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
+                Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
+            Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
             this.totalBill = 0;
             List<BillEntries> temp = billEntries;
             billEntries = null;

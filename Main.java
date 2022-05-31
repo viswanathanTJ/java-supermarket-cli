@@ -1,5 +1,6 @@
 import java.util.*;
-
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class Main {
     // GLOBAL VARIABLES
@@ -8,6 +9,7 @@ public class Main {
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
     public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
     public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>();
+    public static SortedMap<Integer, Integer> topSellingItems = new TreeMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -33,10 +35,11 @@ public class Main {
         userMap.put(user.getUsername(), user);
     }
 
+
     public static void adminMenu() {
         boolean loggedIn = true;
         while(loggedIn == true) {
-            System.out.println("Press 1 to update item\nPress 2 to list the top selling items");
+            System.out.println("\nPress 1 to update item\nPress 2 to list the top selling items");
             System.out.println("Press 3 to add a new customer\nPress 99 to show all users and items\nPress 0 to logout");
             int choice = sc.nextInt();
             switch(choice) {
@@ -54,7 +57,18 @@ public class Main {
                     }
                     break;
                 case 2:
-                    System.out.println("Top selling items is still under development");
+                    if(topSellingItems.size() == 0) {
+                        System.out.println("There is no products sold yet.");
+                        break;
+                    }
+                    Map<Integer, Integer> top = topSellingItems.entrySet()
+                        .stream()
+                        .sorted(Collections.reverseOrder(Entry.comparingByValue())).limit(3)
+                        .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
+                                (entry1, entry2) -> entry2, LinkedHashMap::new));
+                    System.out.println("Top Selling Items are");
+                    for(Integer key : top.keySet()) 
+                        System.out.println("Item id " + key + " Sold " + top.get(key));
                     break;
                 case 3:
                     System.out.println("Enter username: ");
@@ -134,6 +148,10 @@ public class Main {
                         if(orderHistory.get(username) == null)
                             orderHistory.put(username, new ArrayList<>());
                         orderHistory.get(username).add(bill);
+                        for(BillEntries b : bill) {
+                            int t = b.getItemId();
+                            topSellingItems.put(t, topSellingItems.getOrDefault(t, 0)+b.getQuantity());
+                        }
                         System.out.println("Thank you for your purchase :)");
                     }
                     break;
