@@ -9,7 +9,7 @@ public class Main {
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
     public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
     public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>();
-    public static SortedMap<Integer, Integer> topSellingItems = new TreeMap<>();
+    public static HashMap<Integer, Integer> topSellingItems = new HashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
