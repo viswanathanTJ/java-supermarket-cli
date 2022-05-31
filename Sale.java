@@ -45,7 +45,18 @@ public class Sale {
         this.totalBill = 0;
     }
             
-    // public void applySpecificCoupon(Map<Integer, Item> itemMap) {}
+    public void applySpecificCoupon(Map<Integer, Item> itemMap, String category) {
+        for(BillEntries b : billEntries) {
+            if(b.getCategory().equals(category)) {
+                int temp = b.getTotalPrice();
+                temp -= (temp * 0.20);
+                b.setTotalPrice(temp);
+            }
+            this.totalBill += b.getTotalPrice();
+            System.out.println(b.toString());
+        }
+        System.out.println("\nTotal Price: "+this.totalBill);
+    }
 
     public List<BillEntries> saleNow(Map<Integer, Item> itemMap, User user) {
         Scanner sn = new Scanner(System.in);
@@ -78,18 +89,16 @@ public class Sale {
                     if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
                         Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
                     Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
-                    
                     user.setCoupon(false);
                 } else if(coupon.equals("CLEAN10")) {
-                    // applySpecificCoupon(itemMap);
-                    System.out.println("Need to implement.");
+                    System.out.println("20% Offer coupon applied successfully for Soap Category");
+                    applySpecificCoupon(itemMap, "Soap");
                 }
                 else {
                     System.out.println("Unable to apply promo code.");
                 }
             }
             this.totalBill = 0;
-            viewCart();
             List<BillEntries> temp = billEntries;
             billEntries = null;
             return temp;

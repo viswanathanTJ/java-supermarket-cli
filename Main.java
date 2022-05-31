@@ -2,6 +2,7 @@ import java.util.*;
 
 
 public class Main {
+    // GLOBAL VARIABLES
     public static final Scanner sc = new Scanner(System.in);
     public static HashMap<String, User> userMap = new HashMap<>();
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
@@ -10,6 +11,7 @@ public class Main {
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
+    //
 
     public static void addItem(int itemId, String itemName, String category, int price, int quantity) {
         Item item = new Item();
@@ -91,54 +93,51 @@ public class Main {
         Sale sale = new Sale();
         System.out.println("Welcome "+username);
         while(loggedIn == true) {
-            System.out.println("Press 1 to place an order\nPress 2 to view the order history\nPress 0 to logout");
+            System.out.println("\nPress 1 to show menu\nPress 2 place an order\nPress 3 to view current cart");
+            System.out.println("Press 4 to confirm/clear order\nPress 5 to view the order history");
+            System.out.println("Press 0 to logout");
             int choice = sc.nextInt();
             switch(choice) {
                 case 0:
                     loggedIn = false;
                     break;
                 case 1:
-                    System.out.println("Press 1 to add item in cart\nPress 2 to view cart\nPress 3 to confirm order\nPress 4 to show menu");
-                    int orderChoice = sc.nextInt();
-                    switch(orderChoice) {
-                        case 1:
-                            System.out.println("Enter item id: ");
-                            int itemId = sc.nextInt();
-                            if(itemMap.containsKey(itemId)) {
-                                System.out.println("Enter quantity: ");
-                                int quantity = sc.nextInt();
-                                Item curItem = itemMap.get(itemId);
-                                if(quantity > curItem.getQuantity()) {
-                                    System.out.println("Sorry. Number of quantity availablity is lower than you ordering.");
-                                    System.out.println("We have the maximum quantity is " + curItem.getQuantity());
-                                } else {
-                                    sale.addToCart(itemId, quantity, curItem);
-                                    curItem.setQuantity(curItem.getQuantity() - quantity);
-                                    System.out.println("Item successfully added to the cart");
-                                }
-                            } else {
-                                System.out.println("Invalid item id.");
-                            }
-                            break;
-                        case 2:
-                            sale.viewCart();
-                            break;
-                        case 3:
-                            List<BillEntries> bill = sale.saleNow(itemMap, userMap.get(username));
-                            if(bill != null) {
-                                if(orderHistory.get(username) == null)
-                                    orderHistory.put(username, new ArrayList<>());
-                                orderHistory.get(username).add(bill);
-                                System.out.println("Thank you for your purchase :)");
-                            }
-                            break;
-                        case 4:
-                            for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
-                                System.out.println(entry.getValue());
-                            break;
-                        }
-                        break;
+                    System.out.println("ITEMS");
+                    for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
+                        System.out.println(entry.getValue());
+                    break;
                 case 2:
+                    System.out.println("Enter item id: ");
+                    int itemId = sc.nextInt();
+                    if(itemMap.containsKey(itemId)) {
+                        System.out.println("Enter quantity: ");
+                        int quantity = sc.nextInt();
+                        Item curItem = itemMap.get(itemId);
+                        if(quantity > curItem.getQuantity()) {
+                            System.out.println("Sorry. Number of quantity availablity is lower than you ordering.");
+                            System.out.println("We have the maximum quantity is " + curItem.getQuantity());
+                        } else {
+                            sale.addToCart(itemId, quantity, curItem);
+                            curItem.setQuantity(curItem.getQuantity() - quantity);
+                            System.out.println("Item successfully added to the cart");
+                        }
+                    } else {
+                        System.out.println("Invalid item id.");
+                    }
+                    break;
+                case 3:
+                    sale.viewCart();
+                    break;
+                case 4:
+                    List<BillEntries> bill = sale.saleNow(itemMap, userMap.get(username));
+                    if(bill != null) {
+                        if(orderHistory.get(username) == null)
+                            orderHistory.put(username, new ArrayList<>());
+                        orderHistory.get(username).add(bill);
+                        System.out.println("Thank you for your purchase :)");
+                    }
+                    break;
+                case 5:
                     if(orderHistory.containsKey(username)) {
                         List<List<BillEntries>> bills = orderHistory.get(username);
                         int index = 0;
@@ -152,6 +151,8 @@ public class Main {
                     else
                         System.out.println("There is no previous purchase. Kindly make some orders.");
                     break;
+                default:
+                    System.out.println("Invalid Choice");
             }
         }
     }
@@ -160,6 +161,7 @@ public class Main {
         addUser(customerId++, "admin", "admin123", "admin@gmail.com", "admin");
         addUser(customerId++, "kaushik", "kaushik123", "kaush@gmail.com", "customer");
         addUser(customerId++, "vignesh", "vignesh123", "default@gmail.com", "customer");
+        addUser(customerId++, "viswa", "viswa", "viswa@gmail.com", "customer");
         addItem(itemId++, "Good day", "Biscuit", 90, 10);
         addItem(itemId++, "Pantene", "Conditioner", 110, 10);
         addItem(itemId++, "Lux", "Soap", 25, 10);
