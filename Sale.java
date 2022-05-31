@@ -3,6 +3,7 @@ import java.util.*;
 public class Sale {
     private int totalBill = 0;
     List<BillEntries> billEntries = new ArrayList<>();
+    HashMap<Integer, Integer> billEntryDup = new HashMap<>();
     HashMap<Integer, Integer> itemsInCart = new HashMap<>();
     
     public int getTotalBill() {
@@ -17,9 +18,14 @@ public class Sale {
         int curPrice = item.getPrice() * quantity;
         this.totalBill += curPrice;
         BillEntries curProduct = new BillEntries(itemId, quantity, item);
-        if(billEntries == null)
-            billEntries = new ArrayList<>();
-        billEntries.add(curProduct);
+        if(billEntryDup.containsKey(itemId)) {
+            int index = billEntryDup.get(itemId);
+            int prevQuantity = billEntries.get(index).getQuantity();
+            billEntries.get(index).setQuantity(quantity+prevQuantity);
+        } else {
+            billEntries.add(curProduct);
+        }
+        billEntryDup.put(itemId, billEntries.size()-1);
     }
 
     public boolean viewCart() {
@@ -100,7 +106,7 @@ public class Sale {
             Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
             this.totalBill = 0;
             List<BillEntries> temp = billEntries;
-            billEntries = null;
+            billEntries = new ArrayList<>();
             return temp;
         } 
         else {
@@ -113,8 +119,7 @@ public class Sale {
                     itemMap.get(entry.getKey()).setQuantity(resetQuantity);
                 }
                 this.totalBill = 0;
-                // billEntries
-                billEntries = null;
+                billEntries = new ArrayList<>();
 
                 System.out.println("Cart cleared successfully.");                
             }

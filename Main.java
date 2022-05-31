@@ -1,7 +1,6 @@
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class Main {
     // GLOBAL VARIABLES
     public static final Scanner sc = new Scanner(System.in);
@@ -9,7 +8,7 @@ public class Main {
     public static HashMap<Integer, Item> itemMap = new HashMap<>();
     public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
     public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>();
-    public static HashMap<Integer, Integer> topSellingItems = new HashMap<>();
+    public static LinkedHashMap<Integer, Integer> topSellingItems = new LinkedHashMap<>();
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;
@@ -35,6 +34,25 @@ public class Main {
         userMap.put(user.getUsername(), user);
     }
 
+    public static List<Map.Entry<Integer, Integer>> sort(LinkedHashMap<Integer, Integer> sellingItems) {
+        List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(sellingItems.size());
+        entries.addAll(sellingItems.entrySet());
+        int max;
+        Map.Entry temp1 = null;
+        for(int i = 0; i < entries.size(); i++) {
+            max = i;
+            for(int j = i + 1; j < entries.size(); j++) {
+                if (entries.get(j).getValue() > (entries.get(max).getValue()))
+                    max = j;
+            }
+            if(max != i) {
+                temp1 = entries.get(i);
+                entries.set(i, entries.get(max));
+                entries.set(max, temp1);
+            }
+        }
+        return entries;
+    }
 
     public static void adminMenu() {
         boolean loggedIn = true;
@@ -62,29 +80,41 @@ public class Main {
                         break;
                     }
 
-                    List<Map.Entry<Integer, Integer>> list =
-                    new LinkedList<Map.Entry<Integer, Integer>>(topSellingItems.entrySet());
-
-                    Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
-                        @Override
-                        public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                            return (o2.getValue()).compareTo(o1.getValue());
-                        }
-                    });
+                    // OWN SORTING
+                    List<Map.Entry<Integer, Integer>> entries = sort(topSellingItems);
 
                     int max = 3;
-                    for (Map.Entry<Integer, Integer> entry : list) {
-                        if(max-- == 0) break;
-                        System.out.println("Item id: " + entry.getKey() + " Sold Quantity: " + entry.getValue());
+                    for(Map.Entry<Integer, Integer> m : entries) {
+                            if(max-- == 0) break;
+                        Item curItem = itemMap.get(m.getKey());
+                        System.out.println(curItem.getDetailsWithQuantity(m.getValue()));
                     }
 
+                    // COLLECTIONS SORT
+                    // List<Map.Entry<Integer, Integer>> list =
+                    // new LinkedList<Map.Entry<Integer, Integer>>(topSellingItems.entrySet());
+                    
+                    
+                    // Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+                    //     @Override
+                    //     public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                    //         return (o2.getValue()).compareTo(o1.getValue());
+                    //     }
+                    // });
+
+                    // int max = 3;
+                    // for (Map.Entry<Integer, Integer> entry : list) {
+                    //     if(max-- == 0) break;
+                    //     Item curItem = itemMap.get(entry.getKey());
+                    //     System.out.println(curItem.getDetailsWithQuantity(entry.getValue()));
+                    // }
+                    // JAVA 8
                     // Map<Integer, Integer> top = topSellingItems.entrySet()
                     //     .stream()
                     //     .sorted(Collections.reverseOrder(Entry.comparingByValue())).limit(3)
                     //     .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
                     //             (entry1, entry2) -> entry2, LinkedHashMap::new));
                     // System.out.println("Top Selling Items are");
-                    // for(Integer key : top.keySet()) 
                     //     System.out.println("Item id " + key + " Sold " + top.get(key));
                     break;
                 case 3:
@@ -123,11 +153,16 @@ public class Main {
         boolean loggedIn = true;
         Sale sale = new Sale();
         System.out.println("Welcome "+username);
+        int choice;
         while(loggedIn == true) {
             System.out.println("\nPress 1 to show menu\nPress 2 place an order\nPress 3 to view current cart");
             System.out.println("Press 4 to confirm/clear order\nPress 5 to view the order history");
             System.out.println("Press 0 to logout");
-            int choice = sc.nextInt();
+            try {
+                choice = sc.nextInt();
+            } catch(Exception e) {
+                choice = 9;
+            }
             switch(choice) {
                 case 0:
                     loggedIn = false;
@@ -203,7 +238,7 @@ public class Main {
         addItem(itemId++, "Lux", "Soap", 25, 10);
         addItem(itemId++, "Dove", "Soap", 45, 10);
     }
-
+    
     public static void main(String[] args) {
         // Preloading Data
             preload();
@@ -230,7 +265,7 @@ public class Main {
                 }
             }
         } catch (Exception e) { 
-            // System.out.println(e);
+            System.out.println(e);
             System.out.println("Good bye..");
         }
         //
