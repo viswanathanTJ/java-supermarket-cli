@@ -2,7 +2,6 @@ import java.util.*;
 
 public class Sale {
     private int totalBill = 0;
-    StringBuilder bill = new StringBuilder();
     List<BillEntries> billEntries = new ArrayList<>();
     HashMap<Integer, Integer> itemsInCart = new HashMap<>();
     
@@ -84,11 +83,6 @@ public class Sale {
                     }
                     this.totalBill -= (this.totalBill / 10);
                     System.out.println("\nTotal Price: " + this.totalBill);
-                    
-                    // Storing Total Bill due to coupon
-                    // if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
-                    //     Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
-                    // Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
                     user.setCoupon(false);
                 } else if(coupon.equals("CLEAN10")) {
                     System.out.println("20% Offer coupon applied successfully for Soap Category");
@@ -100,6 +94,7 @@ public class Sale {
             } else {
                 viewCart();
             }
+            // Storing total bill for the current cart order
             if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
                 Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
             Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
@@ -117,7 +112,6 @@ public class Sale {
                     int resetQuantity = entry.getValue() + itemMap.get(entry.getKey()).getQuantity();
                     itemMap.get(entry.getKey()).setQuantity(resetQuantity);
                 }
-                bill = new StringBuilder();
                 this.totalBill = 0;
                 System.out.println("Cart cleared successfully.");                
             }
@@ -125,8 +119,4 @@ public class Sale {
         return null;
     }
 
-    @Override
-    public String toString() {
-        return bill.toString();
-    }
 }
