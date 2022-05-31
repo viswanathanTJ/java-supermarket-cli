@@ -61,14 +61,31 @@ public class Main {
                         System.out.println("There is no products sold yet.");
                         break;
                     }
-                    Map<Integer, Integer> top = topSellingItems.entrySet()
-                        .stream()
-                        .sorted(Collections.reverseOrder(Entry.comparingByValue())).limit(3)
-                        .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
-                                (entry1, entry2) -> entry2, LinkedHashMap::new));
-                    System.out.println("Top Selling Items are");
-                    for(Integer key : top.keySet()) 
-                        System.out.println("Item id " + key + " Sold " + top.get(key));
+
+                    List<Map.Entry<Integer, Integer>> list =
+                    new LinkedList<Map.Entry<Integer, Integer>>(topSellingItems.entrySet());
+
+                    Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+                        @Override
+                        public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                            return (o2.getValue()).compareTo(o1.getValue());
+                        }
+                    });
+
+                    int max = 3;
+                    for (Map.Entry<Integer, Integer> entry : list) {
+                        if(max-- == 0) break;
+                        System.out.println("Item id: " + entry.getKey() + " Sold Quantity: " + entry.getValue());
+                    }
+
+                    // Map<Integer, Integer> top = topSellingItems.entrySet()
+                    //     .stream()
+                    //     .sorted(Collections.reverseOrder(Entry.comparingByValue())).limit(3)
+                    //     .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
+                    //             (entry1, entry2) -> entry2, LinkedHashMap::new));
+                    // System.out.println("Top Selling Items are");
+                    // for(Integer key : top.keySet()) 
+                    //     System.out.println("Item id " + key + " Sold " + top.get(key));
                     break;
                 case 3:
                     System.out.println("Enter username: ");
@@ -150,7 +167,8 @@ public class Main {
                         orderHistory.get(username).add(bill);
                         for(BillEntries b : bill) {
                             int t = b.getItemId();
-                            topSellingItems.put(t, topSellingItems.getOrDefault(t, 0)+b.getQuantity());
+                            int newItemSoldCount = topSellingItems.getOrDefault(t, 0)+b.getQuantity();
+                            topSellingItems.put(t, newItemSoldCount);
                         }
                         System.out.println("Thank you for your purchase :)");
                     }
@@ -212,7 +230,7 @@ public class Main {
                 }
             }
         } catch (Exception e) { 
-            System.out.println(e);
+            // System.out.println(e);
             System.out.println("Good bye..");
         }
         //

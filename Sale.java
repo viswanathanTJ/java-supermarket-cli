@@ -113,6 +113,9 @@ public class Sale {
                     itemMap.get(entry.getKey()).setQuantity(resetQuantity);
                 }
                 this.totalBill = 0;
+                // billEntries
+                billEntries = null;
+
                 System.out.println("Cart cleared successfully.");                
             }
         }
