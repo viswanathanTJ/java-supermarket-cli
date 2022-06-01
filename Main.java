@@ -33,7 +33,7 @@ public class Main {
         userMap.put(user.getUsername(), user);
     }
 
-    public static void getTopSellingItems(LinkedHashMap<Integer, Integer> sellingItems) {
+    public static void showTopSellingItems(LinkedHashMap<Integer, Integer> sellingItems) {
         if(topSellingItems.size() == 0) {
             System.out.println("There is no products sold yet.");
             return;
@@ -61,7 +61,12 @@ public class Main {
             System.out.println(curItem.getDetailsWithQuantity(m.getValue()));
         }
     }
-
+    
+    public static void showItems() {
+        System.out.println("------------------------------ITEMS------------------------------");
+        for(Item item : itemMap.values())
+            System.out.println(item);
+    }
     public static void addItems() {
         String name, category;
         int price, quantity;
@@ -93,10 +98,10 @@ public class Main {
             System.out.println("Press 1 to update item\nPress 2 to list the top selling items");
             System.out.println("Press 3 to add a new customer\nPress 4 to show all users");
             System.out.println("Press 5 to show all items\nPress 6 to add items\nPress 0 to logout");
-            int choice;
-            choice = sc.nextInt();
+            String choice;
+            choice = sc.next();
             switch(choice) {
-                case 1:
+                case "1":
                     System.out.println("Enter item id: ");
                     int itemId = sc.nextInt();
                     if(itemMap.containsKey(itemId)) {
@@ -109,9 +114,9 @@ public class Main {
                         System.out.println("Invalid item id");
                     }
                     break;
-                case 2:
+                case "2":
                     // OWN SORTING
-                    getTopSellingItems(topSellingItems);
+                    showTopSellingItems(topSellingItems);
 
                     // COLLECTIONS SORT
                     // List<Map.Entry<Integer, Integer>> list =
@@ -140,7 +145,7 @@ public class Main {
                     // System.out.println("Top Selling Items are");
                     //     System.out.println("Item id " + key + " Sold " + top.get(key));
                     break;
-                case 3:
+                case "3":
                     System.out.println("Enter username: ");
                     String username = sc.next();
                     if(userMap.containsKey(username))
@@ -155,23 +160,18 @@ public class Main {
                         System.out.println("Customer added successfully.");
                     }
                     break;
-                case 4:
+                case "4":
                     System.out.println("USERS");
                     for(User user : userMap.values())
                         System.out.println(user);
                     break;
-                case 5:
-                    System.out.println("ITEMS");
-                    for(Item item : itemMap.values())
-                        System.out.println(item);
+                case "5":
+                    showItems();
                     break;
-                case 6:
+                case "6":
                     addItems();
                     break;
-                case 9:
-                    System.out.println("[-] Invalid Input");
-                    break;
-                case 0:
+                case "0":
                     System.out.println("Good Bye admin, See you later\n");
                     loggedIn = false;
                     break;
@@ -186,27 +186,23 @@ public class Main {
         boolean loggedIn = true;
         Sale sale = new Sale();
         System.out.println("\nWelcome "+username);
-        int choice;
+        String choice;
         while(loggedIn == true) {
             System.out.println("\n* Waiting for your commands...");
             System.out.println("Press 1 to show menu\nPress 2 place an order\nPress 3 to view current cart");
             System.out.println("Press 4 to confirm/clear order\nPress 5 to view the order history");
             System.out.println("Press 0 to logout");
-            choice = sc.nextInt();
+            choice = sc.next();
             switch(choice) {
-                case 0:
+                case "0":
                     System.out.println("Good Bye " + username + ", thanks for visiting :)\n");
                     loggedIn = false;
                     break;
-                case 1:
-                    System.out.println("ITEMS");
-                    for(Item item : itemMap.values())
-                        System.out.println(item);
+                case "1":
+                    showItems();
                     break;
-                case 2:
-                    System.out.println("[*] AVAILABLE ITEMS [*]");
-                    for(Item item : itemMap.values())
-                        System.out.println(item);
+                case "2":
+                    showItems();
                     System.out.println("Enter item id: ");
                     int itemId = sc.nextInt();
                     if(itemMap.containsKey(itemId)) {
@@ -225,10 +221,10 @@ public class Main {
                         System.out.println("[-] Invalid item id.");
                     }
                     break;
-                case 3:
+                case "3":
                     sale.viewCart();
                     break;
-                case 4:
+                case "4":
                     List<BillEntries> bill = sale.saleNow(itemMap, userMap.get(username));
                     if(bill != null) {
                         if(orderHistory.get(username) == null)
@@ -242,7 +238,7 @@ public class Main {
                         System.out.println("[*] Thank you for your purchase :)\n");
                     }
                     break;
-                case 5:
+                case "5":
                     if(orderHistory.containsKey(username)) {
                         List<List<BillEntries>> bills = orderHistory.get(username);
                         int index = 0;
@@ -275,8 +271,7 @@ public class Main {
     
     public static void main(String[] args) {
         // Preloading Data
-            preload();
-        //
+        preload();
 
         // Login
         System.out.println("[*] Welcome to JAVA CLI E-Commerce Application [*]\n");
@@ -288,7 +283,8 @@ public class Main {
                     System.out.print("Enter password: ");
                     String password = sc.next();
                     User curUser = userMap.get(username);
-                    if(auth.encrypt(password).equals(curUser.getPassword())) {
+                    String userPassword = auth.decrypt(curUser.getPassword());
+                    if(password.equals(userPassword)) {
                         if(curUser.getRole() == "admin")
                             adminMenu();
                         else if(curUser.getRole() == "customer")
@@ -304,6 +300,5 @@ public class Main {
             System.out.println(e);
             System.out.println("Good bye..");
         }
-        //
     }
 }

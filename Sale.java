@@ -29,7 +29,7 @@ public class Sale {
     }
 
     public boolean viewCart() {
-        if(billEntries != null && billEntries.size() != 0) {
+        if(billEntries.size() != 0) {
             this.totalBill = 0;
             for(BillEntries b : billEntries) {
                 this.totalBill += b.getTotalPrice();
@@ -63,10 +63,11 @@ public class Sale {
 
     public List<BillEntries> saleNow(Map<Integer, Item> itemMap, User user) {
         Scanner sn = Main.sc;
-        System.out.println("Your cart items are:");
-        if(viewCart() == false)
+        if(billEntries.size() == 0) {
+            System.out.println("[-] Cart is empty. Kindly add some products.");
             return null;
-
+        }
+        viewCart();
         System.out.println("Do you want to confirm order[y/n]: ");
         char ch = sn.next().charAt(0);
         if(ch == 'Y' || ch == 'y') {
@@ -113,6 +114,7 @@ public class Sale {
             ch = sn.next().charAt(0);
             if(ch == 'Y' || ch == 'y') {
                 for(Map.Entry<Integer, Integer> entry : itemsInCart.entrySet()) {
+                    billEntryDup.remove(entry.getKey());
                     int resetQuantity = entry.getValue() + itemMap.get(entry.getKey()).getQuantity();
                     itemMap.get(entry.getKey()).setQuantity(resetQuantity);
                 }
