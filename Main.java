@@ -1,6 +1,5 @@
 import java.util.*;
 
-@SuppressWarnings("unchecked")
 public class Main {
     // GLOBAL VARIABLES
     public static final Scanner sc = new Scanner(System.in);
@@ -34,11 +33,15 @@ public class Main {
         userMap.put(user.getUsername(), user);
     }
 
-    public static List<Map.Entry<Integer, Integer>> sort(LinkedHashMap<Integer, Integer> sellingItems) {
+    public static void getTopSellingItems(LinkedHashMap<Integer, Integer> sellingItems) {
+        if(topSellingItems.size() == 0) {
+            System.out.println("There is no products sold yet.");
+            return;
+        }
         List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(sellingItems.size());
         entries.addAll(sellingItems.entrySet());
         int max;
-        Map.Entry temp1 = null;
+        Map.Entry<Integer, Integer> temp1 = null;
         for(int i = 0; i < entries.size(); i++) {
             max = i;
             for(int j = i + 1; j < entries.size(); j++) {
@@ -51,15 +54,47 @@ public class Main {
                 entries.set(max, temp1);
             }
         }
-        return entries;
+        max = 3;
+        for(Map.Entry<Integer, Integer> m : entries) {
+            if(max-- == 0) break;
+            Item curItem = itemMap.get(m.getKey());
+            System.out.println(curItem.getDetailsWithQuantity(m.getValue()));
+        }
+    }
+
+    public static void addItems() {
+        String name, category;
+        int price, quantity;
+        System.out.println("Enter item name: ");
+        name = sc.nextLine();
+        while(name == "") {
+            System.out.println("Name cannot be empty!\nEnter item name:");
+            name = sc.nextLine();
+        }
+        System.out.println("Enter item category: ");
+        category = sc.nextLine();
+        while(category == "") {
+            System.out.println("Category cannot be empty!\nEnter item category:");
+            category = sc.nextLine();
+        }
+        System.out.println("Enter item price: ");
+        price = sc.nextInt();
+        System.out.println("Enter item quantity: ");
+        quantity = sc.nextInt();
+        addItem(itemId++, name, category, price, quantity);
+        System.out.println("[+] Item added successfully");
     }
 
     public static void adminMenu() {
         boolean loggedIn = true;
+        System.out.println("\nWelcome admin!!");
         while(loggedIn == true) {
-            System.out.println("\nPress 1 to update item\nPress 2 to list the top selling items");
-            System.out.println("Press 3 to add a new customer\nPress 99 to show all users and items\nPress 0 to logout");
-            int choice = sc.nextInt();
+            System.out.println("\n* Waiting for your commands...");
+            System.out.println("Press 1 to update item\nPress 2 to list the top selling items");
+            System.out.println("Press 3 to add a new customer\nPress 4 to show all users");
+            System.out.println("Press 5 to show all items\nPress 6 to add items\nPress 0 to logout");
+            int choice;
+            choice = sc.nextInt();
             switch(choice) {
                 case 1:
                     System.out.println("Enter item id: ");
@@ -75,20 +110,8 @@ public class Main {
                     }
                     break;
                 case 2:
-                    if(topSellingItems.size() == 0) {
-                        System.out.println("There is no products sold yet.");
-                        break;
-                    }
-
                     // OWN SORTING
-                    List<Map.Entry<Integer, Integer>> entries = sort(topSellingItems);
-
-                    int max = 3;
-                    for(Map.Entry<Integer, Integer> m : entries) {
-                            if(max-- == 0) break;
-                        Item curItem = itemMap.get(m.getKey());
-                        System.out.println(curItem.getDetailsWithQuantity(m.getValue()));
-                    }
+                    getTopSellingItems(topSellingItems);
 
                     // COLLECTIONS SORT
                     // List<Map.Entry<Integer, Integer>> list =
@@ -132,19 +155,29 @@ public class Main {
                         System.out.println("Customer added successfully.");
                     }
                     break;
-                // debug
-                case 99:
+                case 4:
                     System.out.println("USERS");
-                    for(Map.Entry<String, User> entry: userMap.entrySet()) {
-                        System.out.println(entry.getValue());
-                    }
-                    System.out.println("ITEMS");
-                    for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
-                        System.out.println(entry.getValue());
+                    for(User user : userMap.values())
+                        System.out.println(user);
                     break;
-                //
+                case 5:
+                    System.out.println("ITEMS");
+                    for(Item item : itemMap.values())
+                        System.out.println(item);
+                    break;
+                case 6:
+                    addItems();
+                    break;
+                case 9:
+                    System.out.println("[-] Invalid Input");
+                    break;
                 case 0:
-                    loggedIn = false;                
+                    System.out.println("Good Bye admin, See you later\n");
+                    loggedIn = false;
+                    break;
+                default:
+                    System.out.println("[-] Invalid Input");
+                    break;            
             }
         }
     }
@@ -152,27 +185,28 @@ public class Main {
     public static void customerMenu(String username) {
         boolean loggedIn = true;
         Sale sale = new Sale();
-        System.out.println("Welcome "+username);
+        System.out.println("\nWelcome "+username);
         int choice;
         while(loggedIn == true) {
-            System.out.println("\nPress 1 to show menu\nPress 2 place an order\nPress 3 to view current cart");
+            System.out.println("\n* Waiting for your commands...");
+            System.out.println("Press 1 to show menu\nPress 2 place an order\nPress 3 to view current cart");
             System.out.println("Press 4 to confirm/clear order\nPress 5 to view the order history");
             System.out.println("Press 0 to logout");
-            try {
-                choice = sc.nextInt();
-            } catch(Exception e) {
-                choice = 9;
-            }
+            choice = sc.nextInt();
             switch(choice) {
                 case 0:
+                    System.out.println("Good Bye " + username + ", thanks for visiting :)\n");
                     loggedIn = false;
                     break;
                 case 1:
                     System.out.println("ITEMS");
-                    for(Map.Entry<Integer, Item> entry: itemMap.entrySet())
-                        System.out.println(entry.getValue());
+                    for(Item item : itemMap.values())
+                        System.out.println(item);
                     break;
                 case 2:
+                    System.out.println("[*] AVAILABLE ITEMS [*]");
+                    for(Item item : itemMap.values())
+                        System.out.println(item);
                     System.out.println("Enter item id: ");
                     int itemId = sc.nextInt();
                     if(itemMap.containsKey(itemId)) {
@@ -185,10 +219,10 @@ public class Main {
                         } else {
                             sale.addToCart(itemId, quantity, curItem);
                             curItem.setQuantity(curItem.getQuantity() - quantity);
-                            System.out.println("Item successfully added to the cart");
+                            System.out.println("[+] Item successfully added to the cart");
                         }
                     } else {
-                        System.out.println("Invalid item id.");
+                        System.out.println("[-] Invalid item id.");
                     }
                     break;
                 case 3:
@@ -205,7 +239,7 @@ public class Main {
                             int newItemSoldCount = topSellingItems.getOrDefault(t, 0)+b.getQuantity();
                             topSellingItems.put(t, newItemSoldCount);
                         }
-                        System.out.println("Thank you for your purchase :)");
+                        System.out.println("[*] Thank you for your purchase :)\n");
                     }
                     break;
                 case 5:
@@ -220,10 +254,10 @@ public class Main {
                         }
                     }
                     else
-                        System.out.println("There is no previous purchase. Kindly make some orders.");
+                        System.out.println("[-] There is no previous purchase. Kindly make some orders.");
                     break;
                 default:
-                    System.out.println("Invalid Choice");
+                    System.out.println("[-] Invalid Choice");
             }
         }
     }
@@ -245,11 +279,13 @@ public class Main {
         //
 
         // Login
+        System.out.println("[*] Welcome to JAVA CLI E-Commerce Application [*]\n");
         try {
             while(true) {
-                System.out.println("Enter username and password: ");
+                System.out.print("Enter username: ");
                 String username = sc.next();
                 if(userMap.containsKey(username)) {
+                    System.out.print("Enter password: ");
                     String password = sc.next();
                     User curUser = userMap.get(username);
                     if(auth.encrypt(password).equals(curUser.getPassword())) {
@@ -258,10 +294,10 @@ public class Main {
                         else if(curUser.getRole() == "customer")
                             customerMenu(username);
                     } else {
-                        System.out.println("Invalid password");
+                        System.out.println("[-] Invalid password");
                     }   
                 } else {
-                    System.out.println("Invalid username");
+                    System.out.println("[-] Invalid username");
                 }
             }
         } catch (Exception e) { 

@@ -58,30 +58,25 @@ public class Sale {
                 b.setTotalPrice(temp);
             }
             this.totalBill += b.getTotalPrice();
-            System.out.println(b.toString());
         }
-        System.out.println("\nTotal Price: "+this.totalBill);
     }
 
     public List<BillEntries> saleNow(Map<Integer, Item> itemMap, User user) {
-        Scanner sn = new Scanner(System.in);
+        Scanner sn = Main.sc;
         System.out.println("Your cart items are:");
         if(viewCart() == false)
             return null;
 
         System.out.println("Do you want to confirm order[y/n]: ");
         char ch = sn.next().charAt(0);
-
         if(ch == 'Y' || ch == 'y') {
             System.out.println("Do you want to enter coupon code[y/n]: ");
             ch = sn.next().charAt(0);
-            if(ch == 'Y' || ch == 'y') {
+            while(ch == 'Y' || ch == 'y') {
                 System.out.println("Enter your coupon code: ");
                 String coupon = sn.next();
-
                 if(user.getCoupon() == true && coupon.equals("PROMO010")) {
                     System.out.println("Coupon applied successfully.");
-                    
                     this.totalBill = 0;
                     for(BillEntries b : billEntries) {
                         this.totalBill += b.getTotalPrice();
@@ -90,25 +85,28 @@ public class Sale {
                     this.totalBill -= (this.totalBill / 10);
                     System.out.println("\nTotal Price: " + this.totalBill);
                     user.setCoupon(false);
+                    ch = 'n';
                 } else if(coupon.equals("CLEAN10")) {
                     System.out.println("20% Offer coupon applied successfully for Soap Category");
                     applySpecificCoupon(itemMap, "Soap");
+                    ch = 'n';
                 }
                 else {
-                    System.out.println("Unable to apply promo code.");
+                    System.out.println("[-] Invalid coupon code.");
+                    System.out.println("Do you want to enter another coupon code[y/n]: ");
+                    ch = sn.next().charAt(0);
                 }
-            } else {
-                viewCart();
             }
+            
+            viewCart();
             // Storing total bill for the current cart order
             if(Main.orderHistoryTotalPrice.get(user.getUsername()) == null)
                 Main.orderHistoryTotalPrice.put(user.getUsername(), new ArrayList<>());
             Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
-            this.totalBill = 0;
             List<BillEntries> temp = billEntries;
             billEntries = new ArrayList<>();
             return temp;
-        } 
+        }
         else {
             System.out.println("Order unsuccessfull.");
             System.out.println("Do you want to clear cart Items[y/n]: ");
