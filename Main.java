@@ -3,11 +3,17 @@ import java.util.*;
 public class Main {
     // GLOBAL VARIABLES
     public static final Scanner sc = new Scanner(System.in);
-    public static HashMap<String, User> userMap = new HashMap<>();
-    public static HashMap<Integer, Item> itemMap = new HashMap<>();
-    public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>();
-    public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>();
+    /* Username:User */
+    public static HashMap<String, User> userMap = new HashMap<>(); 
+    /* Itemid:Item */
+    public static HashMap<Integer, Item> itemMap = new HashMap<>(); 
+    /* Username:Billentries */
+    public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>(); 
+    /* Username:BillTotalPrices */
+    public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>(); 
+    /* ItemId:SoldQuantity */
     public static LinkedHashMap<Integer, Integer> topSellingItems = new LinkedHashMap<>();
+
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
     public static int itemId = 100;

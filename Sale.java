@@ -109,7 +109,7 @@ public class Sale {
             return temp;
         }
         else {
-            System.out.println("Order unsuccessfull.");
+            System.out.println("[-] Order unsuccessfull.");
             System.out.println("Do you want to clear cart Items[y/n]: ");
             ch = sn.next().charAt(0);
             if(ch == 'Y' || ch == 'y') {
@@ -121,7 +121,7 @@ public class Sale {
                 this.totalBill = 0;
                 billEntries = new ArrayList<>();
 
-                System.out.println("Cart cleared successfully.");                
+                System.out.println("[*] Cart cleared successfully.");                
             }
         }
         return null;
