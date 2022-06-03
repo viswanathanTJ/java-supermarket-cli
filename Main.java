@@ -11,8 +11,10 @@ public class Main {
     public static HashMap<String, List<List<BillEntries>>> orderHistory = new HashMap<>(); 
     /* Username:BillTotalPrices */
     public static HashMap<String, List<Integer>> orderHistoryTotalPrice = new HashMap<>(); 
-    /* ItemId:SoldQuantity */
-    public static LinkedHashMap<Integer, Integer> topSellingItems = new LinkedHashMap<>();
+    /* [ItemId, Sold Quantity] */
+    public static SortedSet<ArrayList<Integer>> topSellingItems = new TreeSet<>(
+            (o1, o2) -> o2.get(1).compareTo(o1.get(1))
+            );
 
     public static Authentication auth = new Authentication();
     public static int customerId = 100;
@@ -121,35 +123,12 @@ public class Main {
                     }
                     break;
                 case "2":
-                    // OWN SORTING
-                    showTopSellingItems(topSellingItems);
-
-                    // COLLECTIONS SORT
-                    // List<Map.Entry<Integer, Integer>> list =
-                    // new LinkedList<Map.Entry<Integer, Integer>>(topSellingItems.entrySet());
-                    
-                    
-                    // Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
-                    //     @Override
-                    //     public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                    //         return (o2.getValue()).compareTo(o1.getValue());
-                    //     }
-                    // });
-
-                    // int max = 3;
-                    // for (Map.Entry<Integer, Integer> entry : list) {
-                    //     if(max-- == 0) break;
-                    //     Item curItem = itemMap.get(entry.getKey());
-                    //     System.out.println(curItem.getDetailsWithQuantity(entry.getValue()));
-                    // }
-                    // JAVA 8
-                    // Map<Integer, Integer> top = topSellingItems.entrySet()
-                    //     .stream()
-                    //     .sorted(Collections.reverseOrder(Entry.comparingByValue())).limit(3)
-                    //     .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
-                    //             (entry1, entry2) -> entry2, LinkedHashMap::new));
-                    // System.out.println("Top Selling Items are");
-                    //     System.out.println("Item id " + key + " Sold " + top.get(key));
+                    int max = 3;
+                    for(ArrayList<Integer> sItem : topSellingItems) {
+                        if(max-- == 0) break;
+                        Item curItem = itemMap.get(sItem.get(0));
+                        System.out.println(curItem.getDetailsWithQuantity(sItem.get(1)));
+                    }
                     break;
                 case "3":
                     System.out.println("Enter username: ");
@@ -237,9 +216,21 @@ public class Main {
                             orderHistory.put(username, new ArrayList<>());
                         orderHistory.get(username).add(bill);
                         for(BillEntries b : bill) {
+                            boolean flag = true;
                             int t = b.getItemId();
-                            int newItemSoldCount = topSellingItems.getOrDefault(t, 0)+b.getQuantity();
-                            topSellingItems.put(t, newItemSoldCount);
+                            int existQuantity = 0;
+                            for(ArrayList<Integer> singleItem : topSellingItems) {
+                                if(b.getItemId() == singleItem.get(0)) {
+                                    existQuantity = singleItem.get(1);
+                                    singleItem.set(1, existQuantity+b.getQuantity());
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if(flag == true) {
+                                ArrayList<Integer> a = new ArrayList<Integer>(Arrays.asList(t, b.getQuantity()));
+                                topSellingItems.add(a);
+                            }
                         }
                         System.out.println("[*] Thank you for your purchase :)\n");
                     }
@@ -281,7 +272,7 @@ public class Main {
 
         // Login
         System.out.println("[*] Welcome to JAVA CLI E-Commerce Application [*]\n");
-        try {
+        // try {
             while(true) {
                 System.out.print("Enter username: ");
                 String username = sc.next();
@@ -302,9 +293,9 @@ public class Main {
                     System.out.println("[-] Invalid username");
                 }
             }
-        } catch (Exception e) { 
-            System.out.println(e);
-            System.out.println("Good bye..");
-        }
+        // } catch (Exception e) { 
+        //     System.out.println(e);
+        //     System.out.println("Good bye..");
+        // }
     }
 }

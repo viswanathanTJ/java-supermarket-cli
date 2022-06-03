@@ -24,8 +24,8 @@ public class Sale {
             billEntries.get(index).setQuantity(quantity+prevQuantity);
         } else {
             billEntries.add(curProduct);
+            billEntryDup.put(itemId, billEntryDup.size());
         }
-        billEntryDup.put(itemId, billEntries.size()-1);
     }
 
     public boolean viewCart() {
@@ -106,6 +106,7 @@ public class Sale {
             Main.orderHistoryTotalPrice.get(user.getUsername()).add(this.totalBill);
             List<BillEntries> temp = billEntries;
             billEntries = new ArrayList<>();
+            billEntryDup = new HashMap<>();
             return temp;
         }
         else {
