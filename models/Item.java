@@ -1,3 +1,4 @@
+package models;
 public class Item {
     protected int itemId;
     protected String itemName;

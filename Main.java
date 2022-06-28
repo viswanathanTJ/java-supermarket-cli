@@ -1,5 +1,10 @@
 import java.util.*;
 
+import functions.Authentication;
+import models.BillEntries;
+import models.Item;
+import models.User;
+
 public class Main {
     // GLOBAL VARIABLES
     public static final Scanner sc = new Scanner(System.in);

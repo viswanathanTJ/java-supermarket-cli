@@ -1,7 +1,7 @@
+package models;
 public class BillEntries {
     protected int itemId;
     protected String itemName;
-    
     protected int price;
     protected int quantity;
     protected int totalPrice;
@@ -9,7 +9,7 @@ public class BillEntries {
     
     Item item;
     
-    BillEntries(int itemId, int quantity, Item item) {
+    public BillEntries(int itemId, int quantity, Item item) {
         this.item = item;
         this.itemId = itemId;
         this.itemName = item.getItemName();

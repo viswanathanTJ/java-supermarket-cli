@@ -1,4 +1,9 @@
+
 import java.util.*;
+
+import models.BillEntries;
+import models.Item;
+import models.User;
 
 public class Sale {
     private int totalBill = 0;

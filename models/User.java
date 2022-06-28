@@ -1,3 +1,4 @@
+package models;
 public class User {
     protected int cid;
     protected String username;

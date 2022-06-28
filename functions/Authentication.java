@@ -1,3 +1,4 @@
+package functions;
 
 
 public class Authentication {
@@ -11,8 +12,8 @@ public class Authentication {
             } else if (s.charAt(i) == '9') {
                 encryptedString += '0';
             } else {
-                int temp = s.charAt(i) + 1; // 66
-                char ctemp = (char) temp; // b
+                int temp = s.charAt(i) + 1;
+                char ctemp = (char) temp;
                 encryptedString += ctemp; 
             }
         }
